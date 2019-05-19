@@ -9,5 +9,8 @@
         <module name="nettybook2" />
       </profile>
     </annotationProcessing>
+    <bytecodeTargetLevel>
+      <module name="nettybook2" target="1.7" />
+    </bytecodeTargetLevel>
   </component>
 </project>
