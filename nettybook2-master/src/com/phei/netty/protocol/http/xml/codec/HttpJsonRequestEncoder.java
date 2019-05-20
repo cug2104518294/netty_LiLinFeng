@@ -7,15 +7,18 @@ import io.netty.handler.codec.http.*;
 import java.net.InetAddress;
 import java.util.List;
 
-import static io.netty.handler.codec.http.HttpHeaderUtil.setContentLength;
-
-public class HttpXmlRequestEncoder extends
-        AbstractHttpXmlEncoder<HttpXmlRequest> {
-
+/**
+ * @description:
+ * @author: lvzm.lv@dji.com
+ * @create: 2019-05-20 11:55
+ **/
+public class HttpJsonRequestEncoder extends AbstractHttpJsonEncoder<HttpJsonRequest> {
     @Override
-    protected void encode(ChannelHandlerContext ctx, HttpXmlRequest msg,
-                          List<Object> out) throws Exception {
+    protected void encode(ChannelHandlerContext ctx, HttpJsonRequest msg, List<Object> out) throws Exception {
+        //(1)调用父类的encode0，将业务需要发送的对象转换为Json
         ByteBuf body = encode0(ctx, msg.getBody());
+        //(2) 如果业务自定义了HTTP消息头，则使用业务的消息头，否则在这里构造HTTP消息头
+        // 这里使用硬编码的方式来写消息头，实际中可以写入配置文件
         FullHttpRequest request = msg.getRequest();
         if (request == null) {
             request = new DefaultFullHttpRequest(HttpVersion.HTTP_1_1,
@@ -23,6 +26,7 @@ public class HttpXmlRequestEncoder extends
             HttpHeaders headers = request.headers();
             headers.set(HttpHeaderNames.HOST, InetAddress.getLocalHost()
                     .getHostAddress());
+            //headers.set(HttpHeaderNames.CONNECTION, HttpHeaders.Values.CLOSE);
             headers.set(HttpHeaderNames.CONNECTION, HttpHeaderValues.CLOSE);
             headers.set(HttpHeaderNames.ACCEPT_ENCODING,
                     HttpHeaderValues.GZIP.toString() + ','
@@ -31,13 +35,15 @@ public class HttpXmlRequestEncoder extends
                     "ISO-8859-1,utf-8;q=0.7,*;q=0.7");
             headers.set(HttpHeaderNames.ACCEPT_LANGUAGE, "zh");
             headers.set(HttpHeaderNames.USER_AGENT,
-                    "Netty xml Http Client side");
+                    "Netty json Http Client side");
             headers.set(HttpHeaderNames.ACCEPT,
-                    "text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8");
+                    "text/html,application/json;q=0.9,*/*;q=0.8");
         }
-        //HttpHeaders.setContentLength(request, body.readableBytes());
-        setContentLength(request, body.readableBytes());
+        // HttpUtil.setContentLength(request, body.readableBytes());
+        HttpHeaderUtil.setContentLength(request, body.readableBytes());
+        // (3) 编码后的对象
         out.add(request);
     }
+
 
 }

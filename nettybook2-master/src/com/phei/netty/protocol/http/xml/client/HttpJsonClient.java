@@ -1,5 +1,7 @@
 package com.phei.netty.protocol.http.xml.client;
 
+import com.phei.netty.protocol.http.xml.codec.HttpJsonRequestEncoder;
+import com.phei.netty.protocol.http.xml.codec.HttpJsonResponseDecoder;
 import com.phei.netty.protocol.http.xml.pojo.Order;
 import io.netty.bootstrap.Bootstrap;
 import io.netty.channel.ChannelFuture;
@@ -25,12 +27,11 @@ public class HttpJsonClient {
                     .option(ChannelOption.TCP_NODELAY, true)
                     .handler(new ChannelInitializer<SocketChannel>() {
                         @Override
-                        public void initChannel(SocketChannel ch)
-                                throws Exception {
+                        public void initChannel(SocketChannel ch) {
                             ch.pipeline().addLast("http-decoder",
                                     new HttpResponseDecoder());
                             ch.pipeline().addLast("http-aggregator",
-                                    new HttpObjectAggregator(65536));
+                                    new HttpObjectAggregator(65536)); //// 目的是将多个消息转换为单一的request或者response对象
                             // json解码器
                             ch.pipeline().addLast("json-decoder", new HttpJsonResponseDecoder(Order.class, true));
                             ch.pipeline().addLast("http-encoder",
@@ -44,7 +45,6 @@ public class HttpJsonClient {
 
             // 发起异步连接操作
             ChannelFuture f = b.connect(new InetSocketAddress(port)).sync();
-
             // 当代客户端链路关闭
             f.channel().closeFuture().sync();
         } finally {
@@ -55,13 +55,13 @@ public class HttpJsonClient {
 
     public static void main(String[] args) throws Exception {
         int port = 8080;
-        if (args != null && args.length > 0) {
-            try {
-                port = Integer.valueOf(args[0]);
-            } catch (NumberFormatException e) {
-                // 采用默认值
-            }
-        }
+//        if (args != null && args.length > 0) {
+//            try {
+//                port = Integer.valueOf(args[0]);
+//            } catch (NumberFormatException e) {
+//                // 采用默认值
+//            }
+//        }
         new HttpJsonClient().connect(port);
     }
 }

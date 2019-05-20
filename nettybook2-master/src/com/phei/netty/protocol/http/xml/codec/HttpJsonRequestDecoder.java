@@ -11,7 +11,7 @@ import io.netty.util.CharsetUtil;
 
 import java.util.List;
 
-import static io.netty.handler.codec.http.HttpHeaders.Names.CONTENT_TYPE;
+import static io.netty.handler.codec.http.HttpHeaderNames.CONTENT_TYPE;
 import static io.netty.handler.codec.http.HttpVersion.HTTP_1_1;
 
 
@@ -21,26 +21,13 @@ public class HttpJsonRequestDecoder extends AbstractHttpJsonDecoder<FullHttpRequ
         this(clazz, false);
     }
 
-    /**
-     * 构造器
-     *
-     * @param clazz   解码的对象信息
-     * @param isPrint 是否需要打印
-     */
     public HttpJsonRequestDecoder(Class<?> clazz, boolean isPrint) {
         super(clazz, isPrint);
     }
 
-    /**
-     * @param ctx channel上下文
-     * @param msg 消息
-     * @param out 输出集合
-     * @throws Exception
-     */
     @Override
-    protected void decode(ChannelHandlerContext ctx, FullHttpRequest msg, List<Object> out) throws Exception {
-        //if (!msg.decoderResult().isSuccess()) {
-        if (!msg.getDecoderResult().isSuccess()) {
+    protected void decode(ChannelHandlerContext ctx, FullHttpRequest msg, List<Object> out) {
+        if (!msg.decoderResult().isSuccess()) {
             sendError(ctx, HttpResponseStatus.BAD_REQUEST);
             return;
         }
@@ -56,7 +43,7 @@ public class HttpJsonRequestDecoder extends AbstractHttpJsonDecoder<FullHttpRequ
         FullHttpResponse response = new DefaultFullHttpResponse(HTTP_1_1,
                 status, Unpooled.copiedBuffer("Failure: " + status.toString()
                 + "\r\n", CharsetUtil.UTF_8));
-        response.headers().set(CONTENT_TYPE, "text/plain; charset=UTF-8");
+        response.headers().set(CONTENT_TYPE, "text/plain;charset=UTF-8");
         ctx.writeAndFlush(response).addListener(ChannelFutureListener.CLOSE);
     }
 }

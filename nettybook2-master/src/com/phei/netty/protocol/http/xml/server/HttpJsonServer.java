@@ -1,5 +1,8 @@
-package com.phei.netty.protocol.http.fileServer;
+package com.phei.netty.protocol.http.xml.server;
 
+import com.phei.netty.protocol.http.xml.codec.HttpJsonRequestDecoder;
+import com.phei.netty.protocol.http.xml.codec.HttpJsonResponseEncoder;
+import com.phei.netty.protocol.http.xml.pojo.Order;
 import io.netty.bootstrap.ServerBootstrap;
 import io.netty.channel.ChannelFuture;
 import io.netty.channel.ChannelInitializer;
@@ -10,13 +13,11 @@ import io.netty.channel.socket.nio.NioServerSocketChannel;
 import io.netty.handler.codec.http.HttpObjectAggregator;
 import io.netty.handler.codec.http.HttpRequestDecoder;
 import io.netty.handler.codec.http.HttpResponseEncoder;
-import io.netty.handler.stream.ChunkedWriteHandler;
 
+import java.net.InetSocketAddress;
 
-public class HttpFileServer {
-    private static final String DEFAULT_URL = "/src/com/phei/netty/";
-
-    public void run(final int port, final String url) throws Exception {
+public class HttpJsonServer {
+    public void run(final int port) throws Exception {
         EventLoopGroup bossGroup = new NioEventLoopGroup();
         EventLoopGroup workerGroup = new NioEventLoopGroup();
         try {
@@ -27,21 +28,21 @@ public class HttpFileServer {
                         @Override
                         protected void initChannel(SocketChannel ch)
                                 throws Exception {
-                            ch.pipeline().addLast("http-decoder",
-                                    new HttpRequestDecoder()); // 请求消息解码器
-                            ch.pipeline().addLast("http-aggregator",
-                                    new HttpObjectAggregator(65536));// 目的是将多个消息转换为单一的request或者response对象
-                            ch.pipeline().addLast("http-encoder",
-                                    new HttpResponseEncoder());//响应解码器
-                            ch.pipeline().addLast("http-chunked",
-                                    new ChunkedWriteHandler());//目的是支持异步大文件传输
-                            ch.pipeline().addLast("fileServerHandler",
-                                    new HttpFileServerHandler(url));// 业务逻辑
+                            //接收HttpJsonRequest，需要对应解码器
+                            //ByteBuf->FullHttpRequest-> HttpJsonRequestDecoder
+                            //输出HttpJsonResponse，需要对应编码器
+                            //HttpResponseEncoder->FullHttpResponse-> HttpJsonResponseEncoder
+                            ch.pipeline().addLast("http-decoder", new HttpRequestDecoder());
+                            ch.pipeline().addLast("http-aggregator", new HttpObjectAggregator(65536));
+                            ch.pipeline().addLast("json-decoder", new HttpJsonRequestDecoder(Order.class, true));
+                            ch.pipeline().addLast("http-encoder", new HttpResponseEncoder());
+                            ch.pipeline().addLast("json-encoder", new HttpJsonResponseEncoder());
+                            ch.pipeline().addLast("jsonServerHandler", new HttpJsonServerHandler());
                         }
                     });
-            ChannelFuture future = b.bind("127.0.0.1", port).sync();
-            System.out.println("HTTP文件目录服务器启动，网址是 : " + "http://127.0.0.1:"
-                    + port + url);
+            ChannelFuture future = b.bind(new InetSocketAddress(port)).sync();
+            System.out.println("HTTP订购服务器启动，网址是 : " + "http://localhost:"
+                    + port);
             future.channel().closeFuture().sync();
         } finally {
             bossGroup.shutdownGracefully();
@@ -58,9 +59,6 @@ public class HttpFileServer {
                 e.printStackTrace();
             }
         }
-        String url = DEFAULT_URL;
-        if (args.length > 1)
-            url = args[1];
-        new HttpFileServer().run(port, url);
+        new HttpJsonServer().run(port);
     }
 }

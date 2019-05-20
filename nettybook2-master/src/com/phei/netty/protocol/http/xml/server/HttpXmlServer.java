@@ -15,6 +15,9 @@
  */
 package com.phei.netty.protocol.http.xml.server;
 
+import com.phei.netty.protocol.http.xml.codec.HttpXmlRequestDecoder;
+import com.phei.netty.protocol.http.xml.codec.HttpXmlResponseEncoder;
+import com.phei.netty.protocol.http.xml.pojo.Order;
 import io.netty.bootstrap.ServerBootstrap;
 import io.netty.channel.ChannelFuture;
 import io.netty.channel.ChannelInitializer;
@@ -28,15 +31,6 @@ import io.netty.handler.codec.http.HttpResponseEncoder;
 
 import java.net.InetSocketAddress;
 
-import com.phei.netty.protocol.http.xml.codec.HttpXmlRequestDecoder;
-import com.phei.netty.protocol.http.xml.codec.HttpXmlResponseEncoder;
-import com.phei.netty.protocol.http.xml.pojo.Order;
-
-/**
- * @author lilinfeng
- * @date 2014年2月14日
- * @version 1.0
- */
 public class HttpXmlServer {
     public void run(final int port) throws Exception {
 	EventLoopGroup bossGroup = new NioEventLoopGroup();

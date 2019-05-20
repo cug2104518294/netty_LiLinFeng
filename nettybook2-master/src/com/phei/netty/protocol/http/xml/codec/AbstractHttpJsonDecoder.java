@@ -8,6 +8,7 @@ import io.netty.handler.codec.MessageToMessageDecoder;
 import java.nio.charset.Charset;
 
 public abstract class AbstractHttpJsonDecoder<T> extends MessageToMessageDecoder<T> {
+
     private Class<?> clazz;
     private boolean isPrint;
     private final static Charset UTF_8 = Charset.forName("UTF-8");
@@ -23,9 +24,11 @@ public abstract class AbstractHttpJsonDecoder<T> extends MessageToMessageDecoder
 
     protected Object decode0(ChannelHandlerContext ctx, ByteBuf body) {
         String content = body.toString(UTF_8);
-        if (isPrint)
+        if (isPrint) {
             System.out.println("The body is : " + content);
+        }
         Object result = FastJsonUtils.convertJSONToObject(content, clazz);
         return result;
     }
+
 }

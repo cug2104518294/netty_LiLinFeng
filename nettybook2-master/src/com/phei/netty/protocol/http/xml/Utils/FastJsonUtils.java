@@ -12,6 +12,7 @@ import java.util.HashMap;
 import java.util.Set;
 
 public class FastJsonUtils {
+
     private static final SerializerFeature[] FEATURES = {
             // 输出空置字段
             SerializerFeature.WriteMapNullValue,

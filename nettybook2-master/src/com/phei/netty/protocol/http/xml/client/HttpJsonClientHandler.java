@@ -1,10 +1,12 @@
 package com.phei.netty.protocol.http.xml.client;
 
+import com.phei.netty.protocol.http.xml.codec.HttpJsonRequest;
 import com.phei.netty.protocol.http.xml.pojo.OrderFactory;
 import io.netty.channel.ChannelHandlerContext;
 import io.netty.channel.ChannelInboundHandlerAdapter;
 
 public class HttpJsonClientHandler extends ChannelInboundHandlerAdapter {
+
     @Override
     public void channelActive(ChannelHandlerContext ctx) throws Exception {
         System.out.println("连接上服务器...");
