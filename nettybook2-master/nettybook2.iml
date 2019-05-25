@@ -11,6 +11,33 @@
     <orderEntry type="sourceFolder" forTests="false" />
     <orderEntry type="library" name="Maven: org.apache.commons:commons-lang3:3.9" level="project" />
     <orderEntry type="library" scope="TEST" name="Maven: junit:junit:4.2" level="project" />
+    <orderEntry type="library" name="Maven: io.netty:netty-example:5.0.0.Alpha2" level="project" />
+    <orderEntry type="library" name="Maven: io.netty:netty-transport:5.0.0.Alpha2" level="project" />
+    <orderEntry type="library" name="Maven: io.netty:netty-buffer:5.0.0.Alpha2" level="project" />
+    <orderEntry type="library" name="Maven: io.netty:netty-common:5.0.0.Alpha2" level="project" />
+    <orderEntry type="library" name="Maven: io.netty:netty-resolver:5.0.0.Alpha2" level="project" />
+    <orderEntry type="library" name="Maven: io.netty:netty-transport-sctp:5.0.0.Alpha2" level="project" />
+    <orderEntry type="library" name="Maven: io.netty:netty-codec:5.0.0.Alpha2" level="project" />
+    <orderEntry type="library" name="Maven: io.netty:netty-handler:5.0.0.Alpha2" level="project" />
+    <orderEntry type="library" name="Maven: io.netty:netty-handler-proxy:5.0.0.Alpha2" level="project" />
+    <orderEntry type="library" name="Maven: io.netty:netty-codec-http:5.0.0.Alpha2" level="project" />
+    <orderEntry type="library" name="Maven: io.netty:netty-codec-memcache:5.0.0.Alpha2" level="project" />
+    <orderEntry type="library" name="Maven: io.netty:netty-codec-http2:5.0.0.Alpha2" level="project" />
+    <orderEntry type="library" name="Maven: com.twitter:hpack:0.10.1" level="project" />
+    <orderEntry type="library" name="Maven: io.netty:netty-codec-socks:5.0.0.Alpha2" level="project" />
+    <orderEntry type="library" name="Maven: io.netty:netty-codec-stomp:5.0.0.Alpha2" level="project" />
+    <orderEntry type="library" name="Maven: io.netty:netty-tcnative:${os.detected.classifier}:1.1.32.Fork1" level="project" />
+    <orderEntry type="library" name="Maven: org.eclipse.jetty.npn:npn-api:1.1.1.v20141010" level="project" />
+    <orderEntry type="library" scope="RUNTIME" name="Maven: com.jcraft:jzlib:1.1.2" level="project" />
+    <orderEntry type="library" scope="RUNTIME" name="Maven: org.javassist:javassist:3.19.0-GA" level="project" />
+    <orderEntry type="library" name="Maven: com.yammer.metrics:metrics-core:2.2.0" level="project" />
+    <orderEntry type="library" name="Maven: org.slf4j:slf4j-api:1.7.2" level="project" />
+    <orderEntry type="library" name="Maven: io.netty:netty-transport-udt:5.0.0.Alpha2" level="project" />
+    <orderEntry type="library" name="Maven: com.barchart.udt:barchart-udt-bundle:2.3.0" level="project" />
+    <orderEntry type="library" name="Maven: io.netty:netty-transport-rxtx:5.0.0.Alpha2" level="project" />
+    <orderEntry type="library" name="Maven: org.rxtx:rxtx:2.1.7" level="project" />
+    <orderEntry type="library" scope="RUNTIME" name="Maven: ch.qos.logback:logback-classic:1.0.13" level="project" />
+    <orderEntry type="library" scope="RUNTIME" name="Maven: ch.qos.logback:logback-core:1.0.13" level="project" />
     <orderEntry type="library" name="Maven: io.netty:netty-all:5.0.0.Alpha2" level="project" />
     <orderEntry type="library" name="Maven: com.google.protobuf:protobuf-java:3.6.1" level="project" />
     <orderEntry type="library" name="Maven: org.jboss.marshalling:jboss-marshalling:1.4.10.Final" level="project" />

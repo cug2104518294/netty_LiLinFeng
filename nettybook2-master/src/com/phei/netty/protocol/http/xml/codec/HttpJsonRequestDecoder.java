@@ -11,7 +11,7 @@ import io.netty.util.CharsetUtil;
 
 import java.util.List;
 
-import static io.netty.handler.codec.http.HttpHeaders.Names.CONTENT_TYPE;
+import static io.netty.handler.codec.http.HttpHeaderNames.CONTENT_TYPE;
 import static io.netty.handler.codec.http.HttpVersion.HTTP_1_1;
 
 
@@ -40,7 +40,7 @@ public class HttpJsonRequestDecoder extends AbstractHttpJsonDecoder<FullHttpRequ
     @Override
     protected void decode(ChannelHandlerContext ctx, FullHttpRequest msg, List<Object> out) throws Exception {
         //if (!msg.decoderResult().isSuccess()) {
-        if (!msg.getDecoderResult().isSuccess()) {
+        if (!msg.decoderResult().isSuccess()) {
             sendError(ctx, HttpResponseStatus.BAD_REQUEST);
             return;
         }

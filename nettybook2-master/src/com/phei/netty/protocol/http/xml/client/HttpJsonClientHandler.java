@@ -1,5 +1,6 @@
 package com.phei.netty.protocol.http.xml.client;
 
+import com.phei.netty.protocol.http.xml.codec.HttpJsonRequest;
 import com.phei.netty.protocol.http.xml.pojo.OrderFactory;
 import io.netty.channel.ChannelHandlerContext;
 import io.netty.channel.ChannelInboundHandlerAdapter;

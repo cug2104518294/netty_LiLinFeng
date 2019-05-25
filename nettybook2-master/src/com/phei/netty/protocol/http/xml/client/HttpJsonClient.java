@@ -1,6 +1,5 @@
 package com.phei.netty.protocol.http.xml.client;
 
-import com.phei.netty.protocol.http.xml.pojo.Order;
 import io.netty.bootstrap.Bootstrap;
 import io.netty.channel.ChannelFuture;
 import io.netty.channel.ChannelInitializer;
@@ -10,7 +9,6 @@ import io.netty.channel.nio.NioEventLoopGroup;
 import io.netty.channel.socket.SocketChannel;
 import io.netty.channel.socket.nio.NioSocketChannel;
 import io.netty.handler.codec.http.HttpObjectAggregator;
-import io.netty.handler.codec.http.HttpRequestEncoder;
 import io.netty.handler.codec.http.HttpResponseDecoder;
 
 import java.net.InetSocketAddress;
@@ -32,11 +30,11 @@ public class HttpJsonClient {
                             ch.pipeline().addLast("http-aggregator",
                                     new HttpObjectAggregator(65536));
                             // json解码器
-                            ch.pipeline().addLast("json-decoder", new HttpJsonResponseDecoder(Order.class, true));
-                            ch.pipeline().addLast("http-encoder",
-                                    new HttpRequestEncoder());
-                            ch.pipeline().addLast("json-encoder",
-                                    new HttpJsonRequestEncoder());
+//                            ch.pipeline().addLast("json-decoder", new HttpJsonResponseDecoder(Order.class, true));
+//                            ch.pipeline().addLast("http-encoder",
+//                                    new HttpRequestEncoder());
+//                            ch.pipeline().addLast("json-encoder",
+//                                    new HttpJsonRequestEncoder());
                             ch.pipeline().addLast("jsonClientHandler",
                                     new HttpJsonClientHandler());
                         }

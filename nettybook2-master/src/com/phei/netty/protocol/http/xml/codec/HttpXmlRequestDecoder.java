@@ -15,9 +15,6 @@
  */
 package com.phei.netty.protocol.http.xml.codec;
 
-import static io.netty.handler.codec.http.HttpHeaders.Names.CONTENT_TYPE;
-import static io.netty.handler.codec.http.HttpResponseStatus.BAD_REQUEST;
-import static io.netty.handler.codec.http.HttpVersion.HTTP_1_1;
 import io.netty.buffer.Unpooled;
 import io.netty.channel.ChannelFutureListener;
 import io.netty.channel.ChannelHandlerContext;
@@ -28,6 +25,10 @@ import io.netty.handler.codec.http.HttpResponseStatus;
 import io.netty.util.CharsetUtil;
 
 import java.util.List;
+
+import static io.netty.handler.codec.http.HttpHeaderNames.CONTENT_TYPE;
+import static io.netty.handler.codec.http.HttpResponseStatus.BAD_REQUEST;
+import static io.netty.handler.codec.http.HttpVersion.HTTP_1_1;
 
 /**
  * @author Lilinfeng
@@ -48,7 +49,7 @@ public class HttpXmlRequestDecoder extends
     @Override
     protected void decode(ChannelHandlerContext arg0, FullHttpRequest arg1,
 	    List<Object> arg2) throws Exception {
-	if (!arg1.getDecoderResult().isSuccess()) {
+	if (!arg1.decoderResult().isSuccess()) {
 	    sendError(arg0, BAD_REQUEST);
 	    return;
 	}
