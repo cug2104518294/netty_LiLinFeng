@@ -15,6 +15,7 @@ public class MultiplexerTimeServer implements Runnable {
 
     private Selector selector;
 
+    //套接字通道
     private ServerSocketChannel servChannel;
 
     private volatile boolean stop;
@@ -26,13 +27,13 @@ public class MultiplexerTimeServer implements Runnable {
      */
     public MultiplexerTimeServer(int port) {
         try {
-            //创建Reactor线程 创建多路复用并启动线程
-            selector = Selector.open();
             //打开ServerSocketChannel 用于监听客户端的链接 它是所有客户端连接的父管道
             servChannel = ServerSocketChannel.open();
             //绑定监听端口 设置连接为非阻塞模式
             servChannel.configureBlocking(false);
             servChannel.socket().bind(new InetSocketAddress(port), 1024);
+            //创建Reactor线程 创建多路复用并启动线程
+            selector = Selector.open();
             //将ServerSocketChannel注册Reactor线程的多路复用器selector中 监听accept事件
             servChannel.register(selector, SelectionKey.OP_ACCEPT);
             System.out.println("The time server is start in port : " + port);
@@ -87,17 +88,20 @@ public class MultiplexerTimeServer implements Runnable {
         if (key.isValid()) {
             // 处理新接入的请求消息
             if (key.isAcceptable()) {
+                //多路复用器监听到有新的客户端接入 处理新的接入请求 完成tcp三次握手 建立物理链路
                 // Accept the new connection
                 ServerSocketChannel ssc = (ServerSocketChannel) key.channel();
                 SocketChannel sc = ssc.accept();
                 sc.configureBlocking(false);
                 // Add the new connection to the selector
+                //将新接入的客户端连接注册到Reactor线程的多路复用器上 监听读操作 读取客户端发送的网络信息
                 sc.register(selector, SelectionKey.OP_READ);
             }
             if (key.isReadable()) {
                 // Read the data
                 SocketChannel sc = (SocketChannel) key.channel();
                 ByteBuffer readBuffer = ByteBuffer.allocate(1024);
+                //异步读取客户端请求信息到缓冲区
                 int readBytes = sc.read(readBuffer);
                 if (readBytes > 0) {
                     //如果读取的字节大于0 就对字节进行编解码
@@ -124,7 +128,7 @@ public class MultiplexerTimeServer implements Runnable {
 
     //需要指出的是  由于SocketChannel是异步阻塞的 它并不保证一次能够把所需要发送的字节数组发送完
     //这里就会存在写半包的问题
-    //我们需要注册写操作 不断轮训Selector将没有发送的ByteBuufer发送完毕
+    //我们需要注册写操作 不断轮询Selector将没有发送的ByteBuufer发送完毕
     //然后可以同ByteBuffer的hsaReamining()方法判断消息是否发送完成
     //但是这里主要想表达的是nio的工作方式  所以就没有写半包的问题
     private void doWrite(SocketChannel channel, String response)
