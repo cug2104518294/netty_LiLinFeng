@@ -1,20 +1,8 @@
-/*
- * Copyright 2013-2018 Lilinfeng.
- *  
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
- *  
- *      http://www.apache.org/licenses/LICENSE-2.0
- *  
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
- */
 package com.phei.netty.protocol.netty.client;
 
+import com.phei.netty.protocol.netty.NettyConstant;
+import com.phei.netty.protocol.netty.codec.NettyMessageDecoder;
+import com.phei.netty.protocol.netty.codec.NettyMessageEncoder;
 import io.netty.bootstrap.Bootstrap;
 import io.netty.channel.ChannelFuture;
 import io.netty.channel.ChannelInitializer;
@@ -24,23 +12,14 @@ import io.netty.channel.nio.NioEventLoopGroup;
 import io.netty.channel.socket.SocketChannel;
 import io.netty.channel.socket.nio.NioSocketChannel;
 import io.netty.handler.timeout.ReadTimeoutHandler;
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 
 import java.net.InetSocketAddress;
 import java.util.concurrent.Executors;
 import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.TimeUnit;
 
-import com.phei.netty.protocol.netty.NettyConstant;
-import com.phei.netty.protocol.netty.codec.NettyMessageDecoder;
-import com.phei.netty.protocol.netty.codec.NettyMessageEncoder;
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
-
-/**
- * @author Lilinfeng
- * @version 1.0
- * @date 2014年3月15日
- */
 public class NettyClient {
 
     private static final Log LOG = LogFactory.getLog(NettyClient.class);
@@ -51,9 +30,7 @@ public class NettyClient {
     EventLoopGroup group = new NioEventLoopGroup();
 
     public void connect(int port, String host) throws Exception {
-
         // 配置客户端NIO线程组
-
         try {
             Bootstrap b = new Bootstrap();
             b.group(group).channel(NioSocketChannel.class)
@@ -66,6 +43,10 @@ public class NettyClient {
                                     new NettyMessageDecoder(1024 * 1024, 4, 4));
                             ch.pipeline().addLast("MessageEncoder",
                                     new NettyMessageEncoder());
+                            //netty自身的ReadTimeoutHandler机制 当一定周期内没有读取对方的任何消息的时候
+                            //需要主动关闭链路
+                            //如果是客户端 重新发起连接
+                            //如果是服务端 则需要释放资源 清除客户端登录缓存的信息 等待服务的重新连接
                             ch.pipeline().addLast("readTimeoutHandler",
                                     new ReadTimeoutHandler(50));
                             ch.pipeline().addLast("LoginAuthHandler",
@@ -102,10 +83,6 @@ public class NettyClient {
         }
     }
 
-    /**
-     * @param args
-     * @throws Exception
-     */
     public static void main(String[] args) throws Exception {
         new NettyClient().connect(NettyConstant.PORT, NettyConstant.REMOTEIP);
     }

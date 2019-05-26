@@ -1,67 +1,54 @@
-/*
- * Copyright 2013-2018 Lilinfeng.
- *  
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
- *  
- *      http://www.apache.org/licenses/LICENSE-2.0
- *  
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
- */
+
 package com.phei.netty.codec.marshalling;
 
-import io.netty.handler.codec.marshalling.DefaultMarshallerProvider;
-import io.netty.handler.codec.marshalling.DefaultUnmarshallerProvider;
-import io.netty.handler.codec.marshalling.MarshallerProvider;
-import io.netty.handler.codec.marshalling.MarshallingDecoder;
-import io.netty.handler.codec.marshalling.MarshallingEncoder;
-import io.netty.handler.codec.marshalling.UnmarshallerProvider;
-
+import io.netty.handler.codec.marshalling.*;
 import org.jboss.marshalling.MarshallerFactory;
 import org.jboss.marshalling.Marshalling;
 import org.jboss.marshalling.MarshallingConfiguration;
 
+
 /**
- * @author Lilinfeng
- * @date 2014年2月25日
- * @version 1.0
+ * JBoss的Marshalling序列化框架，它是JBoss内部使用的序列化框架，Netty提供了Marshalling编码和解码器，方便用户在Netty中使用Marshalling。
+ * <p>
+ * JBoss Marshalling是一个Java对象序列化包，对JDK默认的序列化框架进行了优化，但又保持跟java.io.Serializable接口的兼容，同时增加了一些可调的参数和附加的特性，这些参数和特性可通过工厂类进行配置。
  */
+
 public final class MarshallingCodeCFactory {
 
     /**
      * 创建Jboss Marshalling解码器MarshallingDecoder
-     * 
-     * @return
      */
     public static MarshallingDecoder buildMarshallingDecoder() {
-	final MarshallerFactory marshallerFactory = Marshalling
-		.getProvidedMarshallerFactory("serial");
-	final MarshallingConfiguration configuration = new MarshallingConfiguration();
-	configuration.setVersion(5);
-	UnmarshallerProvider provider = new DefaultUnmarshallerProvider(
-		marshallerFactory, configuration);
-	MarshallingDecoder decoder = new MarshallingDecoder(provider, 1024);
-	return decoder;
+        //首先通过Marshalling工具类的getProvidedMarshallerFactory静态方法获取MarshallerFactory实例
+        //参数“serial”表示创建的是Java序列化工厂对象，它由jboss-marshalling-serial-1.3.0.CR9.jar提供。
+        final MarshallerFactory marshallerFactory = Marshalling
+                .getProvidedMarshallerFactory("serial");
+        //创建了MarshallingConfiguration对象
+        final MarshallingConfiguration configuration = new MarshallingConfiguration();
+        //将它的版本号设置为5
+        configuration.setVersion(5);
+        //然后根据MarshallerFactory和MarshallingConfiguration创建UnmarshallerProvider实例
+        UnmarshallerProvider provider = new DefaultUnmarshallerProvider(
+                marshallerFactory, configuration);
+        //最后通过构造函数创建Netty的MarshallingDecoder对象
+        //它有两个参数，分别是UnmarshallerProvider和单个消息序列化后的最大长度。
+        MarshallingDecoder decoder = new MarshallingDecoder(provider, 1024);
+        return decoder;
     }
 
     /**
      * 创建Jboss Marshalling编码器MarshallingEncoder
-     * 
-     * @return
      */
     public static MarshallingEncoder buildMarshallingEncoder() {
-	final MarshallerFactory marshallerFactory = Marshalling
-		.getProvidedMarshallerFactory("serial");
-	final MarshallingConfiguration configuration = new MarshallingConfiguration();
-	configuration.setVersion(5);
-	MarshallerProvider provider = new DefaultMarshallerProvider(
-		marshallerFactory, configuration);
-	MarshallingEncoder encoder = new MarshallingEncoder(provider);
-	return encoder;
+        final MarshallerFactory marshallerFactory = Marshalling
+                .getProvidedMarshallerFactory("serial");
+        final MarshallingConfiguration configuration = new MarshallingConfiguration();
+        configuration.setVersion(5);
+        //创建MarshallerProvider对象，它用于创建Netty提供的MarshallingEncoder实例
+        MarshallerProvider provider = new DefaultMarshallerProvider(
+                marshallerFactory, configuration);
+        //MarshallingEncoder用于将实现序列化接口的POJO对象序列化为二进制数组。
+        MarshallingEncoder encoder = new MarshallingEncoder(provider);
+        return encoder;
     }
 }

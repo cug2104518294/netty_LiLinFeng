@@ -1,62 +1,30 @@
-/*
- * Copyright 2013-2018 Lilinfeng.
- *  
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
- *  
- *      http://www.apache.org/licenses/LICENSE-2.0
- *  
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
- */
 package com.phei.netty.protocol.netty.client;
-
-import io.netty.channel.ChannelHandler;
-import io.netty.channel.ChannelHandlerAdapter;
-import io.netty.channel.ChannelHandlerContext;
-import io.netty.channel.ChannelPipeline;
 
 import com.phei.netty.protocol.netty.MessageType;
 import com.phei.netty.protocol.netty.struct.Header;
 import com.phei.netty.protocol.netty.struct.NettyMessage;
+import io.netty.channel.ChannelHandlerAdapter;
+import io.netty.channel.ChannelHandlerContext;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
-/**
- * @author Lilinfeng
- * @version 1.0
- * @date 2014年3月15日
- */
 public class LoginAuthReqHandler extends ChannelHandlerAdapter {
 
     private static final Log LOG = LogFactory.getLog(LoginAuthReqHandler.class);
 
     /**
-     * Calls {@link ChannelHandlerContext#fireChannelActive()} to forward to the
-     * next {@link ChannelHandler} in the {@link ChannelPipeline}.
-     * <p/>
-     * Sub-classes may override this method to change behavior.
+     * 当客户端跟服务器端TCP三次握手成功之后 由客户端构造握手请求消息发送给服务端
+     * 由于采用IP白名单认证机制  因此就不需要消息体  消息体为空就好了 消息类型为3 握手请求消息
      */
     @Override
     public void channelActive(ChannelHandlerContext ctx) throws Exception {
         ctx.writeAndFlush(buildLoginReq());
     }
 
-    /**
-     * Calls {@link ChannelHandlerContext#fireChannelRead(Object)} to forward to
-     * the next {@link ChannelHandler} in the {@link ChannelPipeline}.
-     * <p/>
-     * Sub-classes may override this method to change behavior.
-     */
     @Override
     public void channelRead(ChannelHandlerContext ctx, Object msg)
             throws Exception {
         NettyMessage message = (NettyMessage) msg;
-
         // 如果是握手应答消息，需要判断是否认证成功
         if (message.getHeader() != null
                 && message.getHeader().getType() == MessageType.LOGIN_RESP
